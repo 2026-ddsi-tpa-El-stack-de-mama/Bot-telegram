@@ -13,7 +13,7 @@ public class TelegramClientProperties {
     }
 
     public void setBotUsername(String botUsername) {
-        this.botUsername = "Grupo8_DSI_bot";
+        this.botUsername = botUsername;
     }
 
     public String getBotToken() {
@@ -21,6 +21,6 @@ public class TelegramClientProperties {
     }
 
     public void setBotToken(String botToken) {
-        this.botToken = "8915397259:AAGqkLWOyBF7vStNGjAfc7BIjZApECA9smQ";
+        this.botToken = botToken;
     }
 }
