@@ -1,7 +1,5 @@
 package ar.edu.utn.dds.k3003;
-import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.DonadorDTO;
-import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.EntidadBeneficaDTO;
-import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.NecesidadMaterialDTO;
+import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.*;
 import ar.edu.utn.dds.k3003.config.TelegramClientProperties;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -79,14 +77,45 @@ public class TelegramBot extends TelegramLongPollingBot {
                 return obtenerNecesidad(id);
             }
 
+            if (texto.startsWith("/eliminar_necesidad ")) {
+                String id = obtenerId(texto);
+                return fachada.eliminarNecesidad(id);
+            }
+
+            if (texto.startsWith("/registrar_necesidad ")) {
+                return registrarNecesidad(texto);
+            }
+
+            if (texto.startsWith("/modificar_necesidad ")) {
+                return modificarNecesidad(texto);
+            }
+
+            if (texto.startsWith("/registrar_donador ")) {
+                return registrarDonador(texto);
+            }
+
+            if (texto.startsWith("/registrar_entidad ")) {
+                return registrarEntidad(texto);
+            }
+
             if (texto.startsWith("/donador ")) {
                 String id = obtenerId(texto);
                 return obtenerDonador(id);
             }
 
+            if (texto.startsWith("/modificar_entidad ")) {
+                return modificarEntidad(texto);
+            }
+
             if (texto.equalsIgnoreCase("/donadores")) {
                 return obtenerDonadores();
             }
+
+            if (texto.startsWith("/estadisticas ")) {
+                String id = obtenerId(texto);
+                return fachada.obtenerEstadisticasDonador(id);
+            }
+
 
             return """
                     No reconocí el comando.
@@ -111,9 +140,30 @@ public class TelegramBot extends TelegramLongPollingBot {
             throw new NumberFormatException();
         }
 
-        Integer.parseInt(partes[1]);
-
         return partes[1];
+    }
+
+    private String[] obtenerArgumentos(String texto) {
+
+        String[] partes = texto.split("\\s+");
+
+        if (partes.length < 2) {
+            throw new IllegalArgumentException(
+                    "Faltan argumentos para el comando."
+            );
+        }
+
+        String[] argumentos = new String[partes.length - 1];
+
+        System.arraycopy(
+                partes,
+                1,
+                argumentos,
+                0,
+                argumentos.length
+        );
+
+        return argumentos;
     }
 
     private String obtenerEntidad(String id) {
@@ -184,6 +234,79 @@ public class TelegramBot extends TelegramLongPollingBot {
                 + "Tipo: " + necesidad.tipo();
     }
 
+    private String registrarNecesidad(String texto) {
+
+        String[] args = obtenerArgumentos(texto);
+
+        if (args.length != 6) {
+            return """
+                    Uso incorrecto.
+
+                    Formato:
+                    /registrar_necesidad <entidadId> <urgencia> <descripcion> <cantidad> <productoId> <tipo>
+
+                    Ejemplo:
+                    /registrar_necesidad 1 ALTA alimentos 10 25 ALIMENTO
+                    """;
+        }
+
+        NecesidadMaterialDTO necesidad = new NecesidadMaterialDTO(
+                null,
+                args[0],
+                Integer.valueOf(args[1]),
+                args[2],
+                Integer.valueOf(args[3]),
+                args[4],
+                TipoNecesidadMaterialEnum.valueOf(args[5])
+        );
+
+        NecesidadMaterialDTO creada =
+                fachada.registrarNecesidad(necesidad);
+
+        if (creada == null) {
+            return "No se pudo registrar la necesidad.";
+        }
+
+        return "Necesidad registrada correctamente.\n\n"
+                + "ID: " + creada.id();
+    }
+
+    private String modificarNecesidad(String texto) {
+
+        String[] args = obtenerArgumentos(texto);
+
+        if (args.length != 7) {
+            return """
+                    Uso incorrecto.
+
+                    Formato:
+                    /modificar_necesidad <id> <entidadId> <urgencia> <descripcion> <cantidad> <productoId> <tipo>
+                    """;
+        }
+
+        String id = args[0];
+
+        NecesidadMaterialDTO necesidad = new NecesidadMaterialDTO(
+                null,
+                args[1],
+                Integer.valueOf(args[2]),
+                args[3],
+                Integer.valueOf(args[4]),
+                args[5],
+                TipoNecesidadMaterialEnum.valueOf(args[6])
+        );
+
+        NecesidadMaterialDTO modificada =
+                fachada.modificarNecesidad(id, necesidad);
+
+        if (modificada == null) {
+            return "No se pudo modificar la necesidad con ID " + id + ".";
+        }
+
+        return "Necesidad modificada correctamente.\n\n"
+                + "ID: " + modificada.id();
+    }
+
     private String obtenerDonador(String id) {
 
         DonadorDTO donador = fachada.buscarDonador(id);
@@ -223,6 +346,124 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         return resultado.toString().trim();
     }
+
+    private String registrarDonador(String texto) {
+
+        String[] args = obtenerArgumentos(texto);
+
+        if (args.length != 3) {
+            return """
+                    Uso incorrecto.
+
+                    Formato:
+                    /registrar_donador <nombre> <apellido> <edad>
+
+                    Ejemplo:
+                    /registrar_donador Juan Perez 25
+                    """;
+        }
+
+        DonadorDTO donador = new DonadorDTO(
+                null,
+                args[0],
+                args[1],
+                Integer.valueOf(args[2]),
+                args[3],
+                args[4],
+                args[5],
+                EstadoDonadorEnum.valueOf(args[6]),
+                args[7]
+        );
+
+        DonadorDTO registrado =
+                fachada.registrarDonador(donador);
+
+        if (registrado == null) {
+            return "No se pudo registrar el donador.";
+        }
+
+        return "Donador registrado correctamente.\n\n"
+                + "ID: " + registrado.id() + "\n"
+                + "Nombre: " + registrado.nombre() + " "
+                + registrado.apellido();
+    }
+
+    private String registrarEntidad(String texto) {
+
+        String[] args = obtenerArgumentos(texto);
+
+        if (args.length != 4) {
+            return """
+                    Uso incorrecto.
+
+                    Formato:
+                    /registrar_entidad <razonSocial> <domicilio> <telefono> <correo>
+
+                    Ejemplo:
+                    /registrar_entidad ComedorSolidario Calle123 1112345678 correo@mail.com
+                    """;
+        }
+
+        EntidadBeneficaDTO entidad =
+                new EntidadBeneficaDTO(
+                        null,
+                        args[0],
+                        args[1],
+                        args[2],
+                        args[3]
+                );
+
+        EntidadBeneficaDTO registrada =
+                fachada.registrarEntidad(entidad);
+
+        if (registrada == null) {
+            return "No se pudo registrar la entidad.";
+        }
+
+        return "Entidad registrada correctamente.\n\n"
+                + "ID: " + registrada.id() + "\n"
+                + "Razón social: " + registrada.razonSocial();
+    }
+
+    private String modificarEntidad(String texto) {
+
+        String[] args = obtenerArgumentos(texto);
+
+        if (args.length != 5) {
+            return """
+                    Uso incorrecto.
+
+                    Formato:
+                    /modificar_entidad <id> <razonSocial> <domicilio> <telefono> <correo>
+
+                    Ejemplo:
+                    /modificar_entidad 1 ComedorNuevo Calle456 1112345678 nuevo@mail.com
+                    """;
+        }
+
+        String id = args[0];
+
+        EntidadBeneficaDTO entidad =
+                new EntidadBeneficaDTO(
+                        null,
+                        args[1],
+                        args[2],
+                        args[3],
+                        args[4]
+                );
+
+        EntidadBeneficaDTO modificada =
+                fachada.modificarEntidad(id, entidad);
+
+        if (modificada == null) {
+            return "No se pudo modificar la entidad con ID " + id + ".";
+        }
+
+        return "Entidad modificada correctamente.\n\n"
+                + "ID: " + modificada.id() + "\n"
+                + "Razón social: " + modificada.razonSocial();
+    }
+
 
     private void enviarMensaje(Long chatId, String texto) {
 
