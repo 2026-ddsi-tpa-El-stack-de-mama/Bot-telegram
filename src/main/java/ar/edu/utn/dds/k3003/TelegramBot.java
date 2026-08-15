@@ -370,19 +370,21 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         String[] args = obtenerArgumentos(texto);
 
-        if (args.length != 3) {
+        if (args.length != 8) {
             return """
-                    Uso incorrecto.
+                Uso incorrecto.
 
-                    Formato:
-                    /registrar_donador <nombre> <apellido> <edad>
+                Formato:
+                /registrar_donador <nombre> <apellido> <edad> <email> <nroDocumento> <domicilio> <estado> <categoria>
 
-                    Ejemplo:
-                    /registrar_donador Juan Perez 25
-                    """;
+                Ejemplo:
+                /registrar_donador Juan Perez 25 juan@mail.com 30123456 CalleFalsa123 VERIFICADO ORO
+                """;
         }
 
-        DonadorDTO donador = new DonadorDTO(
+        DonadorDTO donador;
+        try {
+            donador = new DonadorDTO(
                 null,
                 args[0],
                 args[1],
@@ -392,19 +394,22 @@ public class TelegramBot extends TelegramLongPollingBot {
                 args[5],
                 EstadoDonadorEnum.valueOf(args[6]),
                 args[7]
-        );
+            );
+        } catch (IllegalArgumentException e) {
+            return "El estado indicado no es válido. Estados posibles: " +
+                java.util.Arrays.toString(EstadoDonadorEnum.values());
+        }
 
-        DonadorDTO registrado =
-                fachada.registrarDonador(donador);
+        DonadorDTO registrado = fachada.registrarDonador(donador);
 
         if (registrado == null) {
             return "No se pudo registrar el donador.";
         }
 
         return "Donador registrado correctamente.\n\n"
-                + "ID: " + registrado.id() + "\n"
-                + "Nombre: " + registrado.nombre() + " "
-                + registrado.apellido();
+            + "ID: " + registrado.id() + "\n"
+            + "Nombre: " + registrado.nombre() + " "
+            + registrado.apellido();
     }
 
     private String registrarEntidad(String texto) {
