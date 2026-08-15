@@ -46,19 +46,39 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         if (texto.equalsIgnoreCase("/start")) {
             return """
-                    Bienvenido al sistema de donaciones.
+                Bienvenido al sistema de donaciones.
 
-                    Comandos disponibles:
+                ¿Qué tipo de usuario sos?
 
-                    /entidad <id> - Buscar una entidad.
-                    /entidades - Listar todas las entidades.
-                    /necesidad <id> - Buscar una necesidad.
-                    /donador <id> - Buscar un donador.
-                    /donadores - Listar todos los donadores.
+                /donador - Ver opciones para donadores.
+                /admin - Ver opciones de administración.
+                """;
+        }
 
-                    Ejemplo:
-                    /entidad 1
-                    """;
+        if (texto.equalsIgnoreCase("/donador")) {
+            return """
+                Opciones para donadores:
+
+                /registrar_donador <nombre> <apellido> <edad> ... - Registrarse como donador.
+                /estadisticas <id> - Consultar tus estadísticas.
+                /donador <id> - Buscar un donador por ID.
+                /donadores - Listar todos los donadores.
+                """;
+        }
+
+        if (texto.equalsIgnoreCase("/admin")) {
+            return """
+                Opciones de administración:
+
+                /registrar_entidad <razonSocial> <domicilio> <telefono> <correo> - Crear una entidad.
+                /modificar_entidad <id> <razonSocial> <domicilio> <telefono> <correo> - Editar una entidad.
+                /entidad <id> - Buscar una entidad.
+                /entidades - Listar todas las entidades.
+                /registrar_necesidad <entidadId> <urgencia> <descripcion> <cantidad> <productoId> <tipo> - Alta de necesidad.
+                /eliminar_necesidad <id> - Borrar una necesidad.
+                /modificar_necesidad <id> <entidadId> <urgencia> <descripcion> <cantidad> <productoId> <tipo> - Modificar una necesidad.
+                /necesidad <id> - Consultar una necesidad.
+                """;
         }
 
         try {
@@ -116,12 +136,11 @@ public class TelegramBot extends TelegramLongPollingBot {
                 return fachada.obtenerEstadisticasDonador(id);
             }
 
-
             return """
-                    No reconocí el comando.
+                No reconocí el comando.
 
-                    Escribí /start para consultar los comandos disponibles.
-                    """;
+                Escribí /start para ver las opciones disponibles.
+                """;
 
         } catch (NumberFormatException e) {
             return "El ID indicado no es válido.";
