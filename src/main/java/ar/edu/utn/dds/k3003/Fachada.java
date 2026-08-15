@@ -26,9 +26,8 @@ public class Fachada {
 
     public String obtenerEstadisticasDonador(String id) {
         try {
-            Integer donadorId = Integer.valueOf(id);
 
-            DonadorStatsDTO estadisticas = donadoresYEntidadesClient.estadisticas(String.valueOf(donadorId)).getBody();
+            DonadorStatsDTO estadisticas = donadoresYEntidadesClient.estadisticas(id).getBody();
 
             if (estadisticas == null) {
                 return "No se encontraron estadísticas para el donador con ID " + id;
