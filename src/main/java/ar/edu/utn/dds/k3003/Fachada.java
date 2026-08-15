@@ -60,7 +60,7 @@ public class Fachada {
 
     public DonadorDTO buscarDonador(String id) {
         try {
-            return donadoresYEntidadesClient.buscarDonador(String.valueOf(Integer.valueOf(id))).getBody();
+            return donadoresYEntidadesClient.buscarDonador(id).getBody();
         } catch (NumberFormatException e) {
             return null;
         }
@@ -82,7 +82,7 @@ public class Fachada {
     ) {
         try {
             return donadoresYEntidadesClient.modificarEntidad(
-                    String.valueOf(Integer.valueOf(id)),
+                    id,
                     entidadDTO
             ).getBody();
         } catch (NumberFormatException e) {
@@ -96,7 +96,7 @@ public class Fachada {
 
     public EntidadBeneficaDTO buscarEntidad(String id) {
         try {
-            return donadoresYEntidadesClient.buscarEntidad(String.valueOf(Integer.valueOf(id))).getBody();
+            return donadoresYEntidadesClient.buscarEntidad(id).getBody();
         } catch (NumberFormatException e) {
             return null;
         }
@@ -104,7 +104,7 @@ public class Fachada {
 
     public NecesidadMaterialDTO obtenerNecesidad(String id) {
         try {
-            return donadoresYEntidadesClient.obtenerNecesidad(String.valueOf(Integer.valueOf(id))).getBody();
+            return donadoresYEntidadesClient.obtenerNecesidad(id).getBody();
         } catch (NumberFormatException e) {
             return null;
         }
@@ -118,7 +118,7 @@ public class Fachada {
 
     public String eliminarNecesidad(String id) {
         try {
-            donadoresYEntidadesClient.eliminarNecesidad(String.valueOf(Integer.valueOf(id)));
+            donadoresYEntidadesClient.eliminarNecesidad(id);
 
             return "La necesidad con ID " + id + " fue eliminada correctamente.";
 
@@ -136,7 +136,7 @@ public class Fachada {
     ) {
         try {
             return donadoresYEntidadesClient.modificarNecesidad(
-                    String.valueOf(Integer.valueOf(id)),
+                    id,
                     necesidadDTO
             ).getBody();
         } catch (NumberFormatException e) {
