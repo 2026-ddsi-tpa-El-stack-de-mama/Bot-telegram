@@ -4,12 +4,9 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.DonadorDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.DonadorStatsDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.EntidadBeneficaDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.NecesidadMaterialDTO;
-import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.TipoNecesidadMaterialEnum;
 import ar.edu.utn.dds.k3003.clientes.DonadoresYEntidadesClient;
 
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -105,9 +102,9 @@ public class Fachada {
         }
     }
 
-    public ResponseEntity<EntidadBeneficaDTO> obtenerNecesidad(String id) {
+    public NecesidadMaterialDTO obtenerNecesidad(String id) {
         try {
-            return donadoresYEntidadesClient.buscarEntidad(String.valueOf(Integer.valueOf(id)));
+            return donadoresYEntidadesClient.obtenerNecesidad(String.valueOf(Integer.valueOf(id))).getBody();
         } catch (NumberFormatException e) {
             return null;
         }
