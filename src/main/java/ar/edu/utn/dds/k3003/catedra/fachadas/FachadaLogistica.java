@@ -1,0 +1,33 @@
+package ar.edu.utn.dds.k3003.catedra.fachadas;
+
+import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.NecesidadMaterialDTO;
+import ar.edu.utn.dds.k3003.catedra.dtos.logistica.*;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.concurrent.TimeoutException;
+
+public interface FachadaLogistica {
+
+  DepositoDTO agregarDeposito(DepositoDTO deposito);
+
+  DepositoDTO buscarDepositoPorID(String depositoID) throws NoSuchElementException;
+
+  AsignacionDTO buscarAsignacionPorPaqueteID(String paqueteID) throws NoSuchElementException;
+
+  DepositoDTO gestionarDonacion(
+      String depositoID, String donacionID, String productoID, Integer cantidad)
+          throws NoSuchElementException, IOException, TimeoutException;
+
+  void setAlgoritmoMM(String depositoID, TipoAlgoritmoEnum tipoAlgoritmo);
+
+  AsignacionDTO ejecutarMatchmaking(
+      String depositoID, PaqueteDTO paqueteDTO, List<NecesidadMaterialDTO> necesidades);
+
+  void reportarEntrega(PaqueteDTO paqueteDTO);
+
+  void setFachadaDonadoresYEntidades(FachadaDonadoresYEntidades fachadaDonadoresYEntidades);
+
+  void setFachadaDonaciones(FachadaDonaciones fachadaDonaciones);
+}
