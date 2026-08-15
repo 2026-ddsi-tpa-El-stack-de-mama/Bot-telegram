@@ -271,12 +271,12 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         NecesidadMaterialDTO necesidad = new NecesidadMaterialDTO(
                 null,
-                args[0],
-                Integer.valueOf(args[1]),
-                args[2],
-                Integer.valueOf(args[3]),
-                args[4],
-                TipoNecesidadMaterialEnum.valueOf(args[5])
+                args[1],
+                Integer.valueOf(args[2]),
+                args[3],
+                Integer.valueOf(args[4]),
+                args[5],
+                TipoNecesidadMaterialEnum.valueOf(args[6])
         );
 
         NecesidadMaterialDTO creada =
