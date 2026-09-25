@@ -257,15 +257,15 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         String[] args = obtenerArgumentos(texto);
 
-        if (args.length != 6) {
+        if (args.length != 7) {
             return """
                     Uso incorrecto.
 
                     Formato:
-                    /registrar_necesidad <entidadId> <urgencia> <descripcion> <cantidad> <productoId> <tipo>
+                    /registrar_necesidad <entidadId> <urgencia> <descripcion> <cantidadObjetivo> <cantidadActual> <productoId> <tipo>
 
                     Ejemplo:
-                    /registrar_necesidad 1 ALTA alimentos 10 25 ALIMENTO
+                    /registrar_necesidad 1 ALTA alimentos 10 25 3 ALIMENTO
                     """;
         }
 
@@ -276,7 +276,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                 args[3],
                 Integer.valueOf(args[4]),
                 args[5],
-                TipoNecesidadMaterialEnum.valueOf(args[6])
+                args[6],
+                TipoNecesidadMaterialEnum.valueOf(args[7])
         );
 
         NecesidadMaterialDTO creada =
@@ -294,12 +295,12 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         String[] args = obtenerArgumentos(texto);
 
-        if (args.length != 7) {
+        if (args.length != 8) {
             return """
                     Uso incorrecto.
 
                     Formato:
-                    /modificar_necesidad <id> <entidadId> <urgencia> <descripcion> <cantidad> <productoId> <tipo>
+                    /modificar_necesidad <id> <entidadId> <urgencia> <descripcion> <cantidadObjetivo> <cantidadActual> <productoId> <tipo>
                     """;
         }
 
@@ -312,7 +313,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                 args[3],
                 Integer.valueOf(args[4]),
                 args[5],
-                TipoNecesidadMaterialEnum.valueOf(args[6])
+                args[6],
+                TipoNecesidadMaterialEnum.valueOf(args[7])
         );
 
         NecesidadMaterialDTO modificada =
