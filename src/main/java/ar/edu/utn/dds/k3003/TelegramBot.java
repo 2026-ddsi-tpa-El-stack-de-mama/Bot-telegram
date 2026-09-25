@@ -74,7 +74,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 /modificar_entidad <id> <razonSocial> <domicilio> <telefono> <correo> - Editar una entidad.
                 /entidad <id> - Buscar una entidad.
                 /entidades - Listar todas las entidades.
-                /registrar_necesidad <entidadId> <urgencia> <descripcion> <cantidad> <productoId> <tipo> - Alta de necesidad.
+                /registrar_necesidad <entidadId> <urgencia> <descripcion> <cantidadObjetivo> <cantidadActual> <productoId> <tipo> - Alta de necesidad.
                 /eliminar_necesidad <id> - Borrar una necesidad.
                 /modificar_necesidad <id> <entidadId> <urgencia> <descripcion> <cantidad> <productoId> <tipo> - Modificar una necesidad.
                 /necesidad <id> - Consultar una necesidad.
@@ -265,7 +265,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     /registrar_necesidad <entidadId> <urgencia> <descripcion> <cantidadObjetivo> <cantidadActual> <productoId> <tipo>
 
                     Ejemplo:
-                    /registrar_necesidad 1 ALTA alimentos 10 25 3 ALIMENTO
+                    /registrar_necesidad 1 7 alimentos 10 25 3 EXTRAORDINARIA
                     """;
         }
 
@@ -275,7 +275,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 Integer.valueOf(args[2]),
                 args[3],
                 Integer.valueOf(args[4]),
-                args[5],
+                Integer.valueOf(args[5]),
                 args[6],
                 TipoNecesidadMaterialEnum.valueOf(args[7])
         );
@@ -312,7 +312,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 Integer.valueOf(args[2]),
                 args[3],
                 Integer.valueOf(args[4]),
-                args[5],
+                Integer.valueOf(args[5]),
                 args[6],
                 TipoNecesidadMaterialEnum.valueOf(args[7])
         );

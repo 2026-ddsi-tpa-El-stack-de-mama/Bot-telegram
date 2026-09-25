@@ -6,6 +6,6 @@ public record NecesidadMaterialDTO(
         Integer nivelDeUrgencia,
         String descripcion,
         Integer cantidadObjetivo,
-        String cantidadActual,
+        Integer cantidadActual,
         String productoSolicitadoID,
         TipoNecesidadMaterialEnum tipo) {}
