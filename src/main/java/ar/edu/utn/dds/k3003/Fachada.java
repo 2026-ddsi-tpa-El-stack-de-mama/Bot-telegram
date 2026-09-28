@@ -1,12 +1,14 @@
 package ar.edu.utn.dds.k3003;
 
+import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.DonadorDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.DonadorStatsDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.EntidadBeneficaDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.NecesidadMaterialDTO;
+import ar.edu.utn.dds.k3003.clientes.DonacionesClient;
 import ar.edu.utn.dds.k3003.clientes.DonadoresYEntidadesClient;
 
-
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,9 +17,11 @@ import java.util.List;
 public class Fachada {
 
     private final DonadoresYEntidadesClient donadoresYEntidadesClient;
+    private final DonacionesClient donacionesClient;
 
-    public Fachada(DonadoresYEntidadesClient donadoresYEntidadesClient) {
+    public Fachada(DonadoresYEntidadesClient donadoresYEntidadesClient, DonacionesClient donacionesClient) {
         this.donadoresYEntidadesClient = donadoresYEntidadesClient;
+        this.donacionesClient = donacionesClient;
     }
 
     public DonadorDTO registrarDonador(DonadorDTO donadorDTO) {
@@ -138,6 +142,47 @@ public class Fachada {
                     id,
                     necesidadDTO
             ).getBody();
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    public ProductoDTO registrarProducto(ProductoDTO productoDTO) {
+        return donacionesClient.postProducto(productoDTO).getBody();
+    }
+
+    public String eliminarProducto(String id){
+        try {
+            donacionesClient.deleteProducto(id);
+            return "El producto con ID " + id + " fue eliminada correctamente.";
+
+        } catch (NumberFormatException e) {
+            return "El ID del producto no es válido.";
+
+        } catch (Exception e) {
+            return "No se pudo eliminar el producto con ID " + id + ".";
+        }
+    }
+
+    public ProductoDTO modificarProducto(ProductoDTO productoDTO){
+        try {
+            return donacionesClient.putProducto(productoDTO.id(), productoDTO).getBody();
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    public ResponseEntity<?> buscarProducto(String id){
+        try {
+            return donacionesClient.getProductoByID(id);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    public ResponseEntity<List<ProductoDTO>> obtenerProductos(){
+        try {
+            return donacionesClient.getProductos();
         } catch (NumberFormatException e) {
             return null;
         }

@@ -1,7 +1,9 @@
 package ar.edu.utn.dds.k3003;
+import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.*;
 import ar.edu.utn.dds.k3003.config.TelegramClientProperties;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -48,14 +50,16 @@ public class TelegramBot extends TelegramLongPollingBot {
             return """
                 Bienvenido al sistema de donaciones.
 
-                ¿Qué tipo de usuario sos?
+                ¿Qué quiere consultar?
 
-                /donador - Ver opciones para donadores.
-                /admin - Ver opciones de administración.
+                /donadores - Ver opciones de donadores.
+                /entidades - Ver opciones de entidades.
+                /necesidades - Ver opciones de necesidades.
+                /productos - Ver opciones de productos.
                 """;
         }
 
-        if (texto.equalsIgnoreCase("/donador")) {
+        if (texto.equalsIgnoreCase("/donadores")) {
             return """
                 Opciones para donadores:
 
@@ -66,14 +70,20 @@ public class TelegramBot extends TelegramLongPollingBot {
                 """;
         }
 
-        if (texto.equalsIgnoreCase("/admin")) {
+        if (texto.equalsIgnoreCase("/entidades")) {
             return """
-                Opciones de administración:
+                Opciones de entidades:
 
                 /registrar_entidad <razonSocial> <domicilio> <telefono> <correo> - Crear una entidad.
                 /modificar_entidad <id> <razonSocial> <domicilio> <telefono> <correo> - Editar una entidad.
                 /entidad <id> - Buscar una entidad.
                 /entidades - Listar todas las entidades.
+                """;
+        }
+        if (texto.equalsIgnoreCase("/necesidades")) {
+            return """
+                Opciones de necesidades:
+
                 /registrar_necesidad <entidadId> <urgencia> <descripcion> <cantidadObjetivo> <cantidadActual> <productoId> <tipo> - Alta de necesidad.
                 /eliminar_necesidad <id> - Borrar una necesidad.
                 /modificar_necesidad <id> <entidadId> <urgencia> <descripcion> <cantidad> <productoId> <tipo> - Modificar una necesidad.
@@ -81,8 +91,20 @@ public class TelegramBot extends TelegramLongPollingBot {
                 """;
         }
 
-        try {
+        if (texto.equalsIgnoreCase("/productos")) {
+            return """
+                Opciones de productos:
 
+                /registrar_producto <nombre> <descripcion> <categoriaID> <identificadorID> - Alta de producto.
+                /eliminar_producto <id> - Borrar un producto.
+                /modificar_producto <id> <nombre> <descripcion> <categoriaID> <identificadorID> - Modificar un producto.
+                /producto <id> - Consultar un producto.
+                /productos - Listar todos los productos.
+                """;
+        }
+
+        try {
+            //ENTIDADES ------------------------------------------------------
             if (texto.startsWith("/entidad ")) {
                 String id = obtenerId(texto);
                 return obtenerEntidad(id);
@@ -92,6 +114,15 @@ public class TelegramBot extends TelegramLongPollingBot {
                 return obtenerEntidades();
             }
 
+            if (texto.startsWith("/registrar_entidad ")) {
+                return registrarEntidad(texto);
+            }
+
+            if (texto.startsWith("/modificar_entidad ")) {
+                return modificarEntidad(texto);
+            }
+
+            //NECESIDADES -----------------------------------------------------
             if (texto.startsWith("/necesidad ")) {
                 String id = obtenerId(texto);
                 return obtenerNecesidad(id);
@@ -110,21 +141,14 @@ public class TelegramBot extends TelegramLongPollingBot {
                 return modificarNecesidad(texto);
             }
 
+            //DONADORES ----------------------------------------
             if (texto.startsWith("/registrar_donador ")) {
                 return registrarDonador(texto);
-            }
-
-            if (texto.startsWith("/registrar_entidad ")) {
-                return registrarEntidad(texto);
             }
 
             if (texto.startsWith("/donador ")) {
                 String id = obtenerId(texto);
                 return obtenerDonador(id);
-            }
-
-            if (texto.startsWith("/modificar_entidad ")) {
-                return modificarEntidad(texto);
             }
 
             if (texto.equalsIgnoreCase("/donadores")) {
@@ -134,6 +158,29 @@ public class TelegramBot extends TelegramLongPollingBot {
             if (texto.startsWith("/estadisticas ")) {
                 String id = obtenerId(texto);
                 return fachada.obtenerEstadisticasDonador(id);
+            }
+
+            //PRODUCTOS ---------------------------------------------
+            if(texto.startsWith("/registrar_producto")){
+                return registrarProducto(texto);
+            }
+
+            if(texto.startsWith("/eliminar_producto")){
+                String id = obtenerId(texto);
+                return fachada.eliminarProducto(id);
+            }
+
+            if(texto.startsWith("modificar_producto")){
+                return modificarProducto(texto);
+            }
+
+            if(texto.startsWith("/producto")){
+                String id = obtenerId(texto);
+                return obtenerProducto(id);
+            }
+
+            if(texto.startsWith("/productos")){
+                return obtenerProductos();
             }
 
             return """
@@ -213,7 +260,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                 new StringBuilder("Entidades benéficas registradas\n\n");
 
         for (EntidadBeneficaDTO entidad : entidades) {
-
             resultado.append("ID: ")
                     .append(entidad.id())
                     .append("\n")
@@ -490,6 +536,119 @@ public class TelegramBot extends TelegramLongPollingBot {
                 + "Razón social: " + modificada.razonSocial();
     }
 
+    private String registrarProducto(String texto){
+        String[] args = obtenerArgumentos(texto);
+
+        if (args.length != 4) {
+            return """
+                    Uso incorrecto.
+
+                    Formato:
+                    /registrar_producto <nombre> <descripcion> <categoriaID> <identificadorID>
+
+                    Ejemplo:
+                    /registrar_producto fideos paquete 1 5
+                    """;
+        }
+
+        ProductoDTO producto = new ProductoDTO(
+                        null,
+                        args[0],
+                        args[1],
+                        args[2],
+                        args[3]
+                );
+
+        ProductoDTO registrado = fachada.registrarProducto(producto);
+
+        if (registrado == null) {
+            return "No se pudo registrar la entidad.";
+        }
+
+        return "Producto registrado correctamente.\n\n"
+                + "ID: " + producto.id() + "\n";
+    }
+
+    private String modificarProducto(String texto){
+        String[] args = obtenerArgumentos(texto);
+
+        if (args.length != 5) {
+            return """
+                    Uso incorrecto.
+
+                    Formato:
+                    /registrar_producto <id> <nombre> <descripcion> <categoriaID> <identificadorID>
+
+                    Ejemplo:
+                    /registrar_producto 943 fideos paquete 1 5
+                    """;
+        }
+
+        ProductoDTO producto = new ProductoDTO(
+                args[0],
+                args[1],
+                args[2],
+                args[3],
+                args[4]
+        );
+
+        ProductoDTO modificado = fachada.modificarProducto(producto);
+
+        if (modificado == null) {
+            return "No se pudo registrar la entidad.";
+        }
+
+        return "Producto modificado correctamente.\n\n"
+                + "ID: " + producto.id() + "\n";
+    }
+
+    public String obtenerProducto(String id){
+        ResponseEntity<?> productoDTO = (ResponseEntity<?>) fachada.buscarProducto(id).getBody();
+
+        if (productoDTO == null) {
+            return "No se encontró ningún producto con el ID " + id + ".";
+        }
+
+        ProductoDTO producto = (ProductoDTO) productoDTO.getBody();
+
+        return "Detalle del producto\n\n"
+                + "ID: " + id + "\n"
+                + "Nombre: " + producto.nombre() + "\n"
+                + "Descripción: " + producto.descripcion() + "\n"
+                + "Categoria ID: " + producto.categoriaID() + "\n"
+                + "Identificador ID: " + producto.identificadorID();
+    }
+
+    public String obtenerProductos(){
+        List<ProductoDTO> productos = fachada.obtenerProductos().getBody();
+
+        if (productos == null || productos.isEmpty()) {
+            return "No hay productos registrados.";
+        }
+
+        StringBuilder resultado =
+                new StringBuilder("Productos registrados\n\n");
+
+        for (ProductoDTO producto : productos) {
+            resultado.append("ID: ")
+                    .append(producto.id())
+                    .append("\n")
+                    .append("Nombre: ")
+                    .append(producto.nombre())
+                    .append("\n")
+                    .append("Descripcion: ")
+                    .append(producto.descripcion())
+                    .append("\n")
+                    .append("Categoria ID: ")
+                    .append(producto.categoriaID())
+                    .append("\n")
+                    .append("Identificador ID")
+                    .append(producto.identificadorID())
+                    .append("\n\n");
+        }
+
+        return resultado.toString().trim();
+    }
 
     private void enviarMensaje(Long chatId, String texto) {
 
