@@ -5,9 +5,11 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.DonadorDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.DonadorStatsDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.EntidadBeneficaDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.NecesidadMaterialDTO;
+import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.InsigniaDTO;
 import ar.edu.utn.dds.k3003.clientes.DonacionesClient;
 import ar.edu.utn.dds.k3003.clientes.DonadoresYEntidadesClient;
 
+import ar.edu.utn.dds.k3003.clientes.IncentivosClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +20,12 @@ public class Fachada {
 
     private final DonadoresYEntidadesClient donadoresYEntidadesClient;
     private final DonacionesClient donacionesClient;
+    private final IncentivosClient incentivosClient;
 
-    public Fachada(DonadoresYEntidadesClient donadoresYEntidadesClient, DonacionesClient donacionesClient) {
+    public Fachada(DonadoresYEntidadesClient donadoresYEntidadesClient, DonacionesClient donacionesClient, IncentivosClient incentivosClient) {
         this.donadoresYEntidadesClient = donadoresYEntidadesClient;
         this.donacionesClient = donacionesClient;
+        this.incentivosClient = incentivosClient;
     }
 
     public DonadorDTO registrarDonador(DonadorDTO donadorDTO) {
@@ -183,6 +187,47 @@ public class Fachada {
     public ResponseEntity<List<ProductoDTO>> obtenerProductos(){
         try {
             return donacionesClient.getProductos();
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    public InsigniaDTO registrarInsignia(InsigniaDTO insignia) {
+        return (InsigniaDTO) incentivosClient.postInsignia(insignia).getBody();
+    }
+
+    public String eliminarInsignia(String id){
+        try {
+            incentivosClient.deleteInsignia(id);
+            return "La insignia con ID " + id + " fue eliminada correctamente.";
+
+        } catch (NumberFormatException e) {
+            return "El ID de la insignia no es válido.";
+
+        } catch (Exception e) {
+            return "No se pudo eliminar la insignia con ID " + id + ".";
+        }
+    }
+
+    public InsigniaDTO modificarInsignia(InsigniaDTO insignia){
+        try {
+            return (InsigniaDTO) incentivosClient.putInsignia(insignia.id(), insignia).getBody();
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    public ResponseEntity<?> buscarInsignia(String id){
+        try {
+            return incentivosClient.getInsigniaById(id);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    public ResponseEntity<List<InsigniaDTO>> obtenerInsignias(){
+        try {
+            return incentivosClient.getInsignias();
         } catch (NumberFormatException e) {
             return null;
         }

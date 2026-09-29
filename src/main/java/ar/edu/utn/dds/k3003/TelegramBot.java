@@ -1,6 +1,7 @@
 package ar.edu.utn.dds.k3003;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.*;
+import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.InsigniaDTO;
 import ar.edu.utn.dds.k3003.config.TelegramClientProperties;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
@@ -52,14 +53,15 @@ public class TelegramBot extends TelegramLongPollingBot {
 
                 ¿Qué quiere consultar?
 
-                /donadores - Ver opciones de donadores.
-                /entidades - Ver opciones de entidades.
-                /necesidades - Ver opciones de necesidades.
-                /productos - Ver opciones de productos.
+                /1_donadores - Ver opciones de donadores.
+                /2_entidades - Ver opciones de entidades.
+                /3_necesidades - Ver opciones de necesidades.
+                /4_productos - Ver opciones de productos.
+                /5_insignias - Ver opciones de insignias.
                 """;
         }
 
-        if (texto.equalsIgnoreCase("/donadores")) {
+        if (texto.equalsIgnoreCase("/1_donadores")) {
             return """
                 Opciones para donadores:
 
@@ -70,7 +72,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 """;
         }
 
-        if (texto.equalsIgnoreCase("/entidades")) {
+        if (texto.equalsIgnoreCase("/2_entidades")) {
             return """
                 Opciones de entidades:
 
@@ -80,7 +82,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 /entidades - Listar todas las entidades.
                 """;
         }
-        if (texto.equalsIgnoreCase("/necesidades")) {
+        if (texto.equalsIgnoreCase("/3_necesidades")) {
             return """
                 Opciones de necesidades:
 
@@ -91,7 +93,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 """;
         }
 
-        if (texto.equalsIgnoreCase("/productos")) {
+        if (texto.equalsIgnoreCase("/4_productos")) {
             return """
                 Opciones de productos:
 
@@ -100,6 +102,18 @@ public class TelegramBot extends TelegramLongPollingBot {
                 /modificar_producto <id> <nombre> <descripcion> <categoriaID> <identificadorID> - Modificar un producto.
                 /producto <id> - Consultar un producto.
                 /productos - Listar todos los productos.
+                """;
+        }
+
+        if (texto.equalsIgnoreCase("/5_insignias")) {
+            return """
+                Opciones de insignias:
+
+                /registrar_insignia <nombre> <descripcion> - Alta de insignia.
+                /eliminar_insignia <id> - Borrar una insignia.
+                /modificar_insignia <id> <nombre> <descripcion> - Modificar una insignia.
+                /insignia <id> - Consultar una insignia.
+                /insignias - Listar todas las insignias.
                 """;
         }
 
@@ -181,6 +195,25 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             if(texto.startsWith("/productos")){
                 return obtenerProductos();
+            }
+
+            //INSIGNIAS -----------------------------------------------
+            if(texto.startsWith("registrar_insignia")){
+                return registrarInsignia(texto);
+            }
+
+            if(texto.startsWith("eliminar_insignia")){
+                String id = obtenerId(texto);
+                return fachada.eliminarInsignia(id);
+            }
+
+            if(texto.startsWith("/modificar_insignia")){
+                return modificarInsignia(texto);
+            }
+
+            if(texto.startsWith("/insignia")){
+                String id = obtenerId(texto);
+                return obtenerInsignia(id);
             }
 
             return """
@@ -645,6 +678,107 @@ public class TelegramBot extends TelegramLongPollingBot {
                     .append("Identificador ID")
                     .append(producto.identificadorID())
                     .append("\n\n");
+        }
+
+        return resultado.toString().trim();
+    }
+
+    private String registrarInsignia(String texto) {
+
+        String[] args = obtenerArgumentos(texto);
+
+        if (args.length != 2) {
+            return """
+                    Uso incorrecto.
+
+                    Formato:
+                    /registrar_insignia <nombre> <descripcion> 
+
+                    Ejemplo:
+                    /registrar_insignia especial premium
+                    """;
+        }
+
+        InsigniaDTO insigniaDTO = new InsigniaDTO(
+                        null,
+                        args[0],
+                        args[1]
+                );
+
+        InsigniaDTO registrada = fachada.registrarInsignia(insigniaDTO);
+
+        if (registrada == null) {
+            return "No se pudo registrar la insignia.";
+        }
+
+        return "Insignia registrada correctamente.\n\n"
+                + "ID: " + registrada.id();
+    }
+
+    private String modificarInsignia(String texto){
+        String[] args = obtenerArgumentos(texto);
+
+        if (args.length != 3) {
+            return """
+                    Uso incorrecto.
+
+                    Formato:
+                    /registrar_insignia <id> <nombre> <descripcion> 
+
+                    Ejemplo:
+                    /registrar_insignia 747 especial premium
+                    """;
+        }
+
+        InsigniaDTO insignia = new InsigniaDTO(
+                args[0],
+                args[1],
+                args[2]
+        );
+
+        InsigniaDTO modificado = fachada.modificarInsignia(insignia);
+
+        if (modificado == null) {
+            return "No se pudo registrar la insignia.";
+        }
+
+        return "Insignia modificada correctamente.\n\n"
+                + "ID: " + insignia.id() + "\n";
+    }
+
+    public String obtenerInsignia(String id){
+        ResponseEntity<?> insignia = (ResponseEntity<?>) fachada.buscarInsignia(id).getBody();
+
+        if (insignia == null) {
+            return "No se encontró ninguna insignia con el ID " + id + ".";
+        }
+
+        InsigniaDTO insigniaDTO = (InsigniaDTO) insignia.getBody();
+
+        return "Detalle de la insignia\n\n"
+                + "ID: " + id + "\n"
+                + "Nombre: " + insigniaDTO.nombre() + "\n"
+                + "Descripción: " + insigniaDTO.descripcion();
+    }
+
+    public String obtenerInsignias(){
+        List<InsigniaDTO> insignias = fachada.obtenerInsignias().getBody();
+
+        if (insignias == null || insignias.isEmpty()) {
+            return "No hay insignias registradas.";
+        }
+
+        StringBuilder resultado = new StringBuilder("Insignias registradas\n\n");
+
+        for (InsigniaDTO insignia : insignias) {
+            resultado.append("ID: ")
+                    .append(insignia.id())
+                    .append("\n")
+                    .append("Nombre: ")
+                    .append(insignia.nombre())
+                    .append("\n")
+                    .append("Descripcion: ")
+                    .append(insignia.descripcion());
         }
 
         return resultado.toString().trim();
