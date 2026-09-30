@@ -2,6 +2,7 @@ package ar.edu.utn.dds.k3003;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.*;
 import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.InsigniaDTO;
+import ar.edu.utn.dds.k3003.catedra.dtos.logistica.PaqueteDTO;
 import ar.edu.utn.dds.k3003.config.TelegramClientProperties;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @Lazy
@@ -58,6 +60,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 /3_necesidades - Ver opciones de necesidades.
                 /4_productos - Ver opciones de productos.
                 /5_insignias - Ver opciones de insignias.
+                /6_paquetes - Ver opciones de paquetes.
                 """;
         }
 
@@ -114,6 +117,14 @@ public class TelegramBot extends TelegramLongPollingBot {
                 /modificar_insignia <id> <nombre> <descripcion> - Modificar una insignia.
                 /insignia <id> - Consultar una insignia.
                 /insignias - Listar todas las insignias.
+                """;
+        }
+
+        if (texto.equalsIgnoreCase("/6_paquetes")) {
+            return """
+                Opciones de paquetes:
+
+                /paquete <id> - Consultar un paquete.
                 """;
         }
 
@@ -214,6 +225,16 @@ public class TelegramBot extends TelegramLongPollingBot {
             if(texto.startsWith("/insignia")){
                 String id = obtenerId(texto);
                 return obtenerInsignia(id);
+            }
+
+            if(texto.startsWith("/insignias")){
+                return obtenerInsignias();
+            }
+
+            //PAQUETES ------------------------------------
+            if(texto.startsWith("/paquetes")){
+                String id = obtenerId(texto);
+                return obtenerPaquete(id);
             }
 
             return """
@@ -782,6 +803,20 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
 
         return resultado.toString().trim();
+    }
+
+    public String obtenerPaquete(String id){
+        Optional<PaqueteDTO> paqueteDTO = fachada.buscarPaquete(id);
+
+        if (paqueteDTO.isEmpty()) {
+            return "No se encontró ningun paquete con el ID " + id + ".";
+        }
+
+        return "Detalle de la insignia\n\n"
+                + "ID: " + id + "\n"
+                + "Donación ID: " + paqueteDTO.get().donacionID() + "\n"
+                + "Producto: " + paqueteDTO.get().producto() + "\n"
+                + "Cantidad: " + paqueteDTO.get().cantidad().toString();
     }
 
     private void enviarMensaje(Long chatId, String texto) {

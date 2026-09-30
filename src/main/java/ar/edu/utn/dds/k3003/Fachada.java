@@ -6,14 +6,17 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.DonadorStatsDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.EntidadBeneficaDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.NecesidadMaterialDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.InsigniaDTO;
+import ar.edu.utn.dds.k3003.catedra.dtos.logistica.PaqueteDTO;
 import ar.edu.utn.dds.k3003.clientes.DonacionesClient;
 import ar.edu.utn.dds.k3003.clientes.DonadoresYEntidadesClient;
 
 import ar.edu.utn.dds.k3003.clientes.IncentivosClient;
+import ar.edu.utn.dds.k3003.clientes.LogisticaClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class Fachada {
@@ -21,11 +24,13 @@ public class Fachada {
     private final DonadoresYEntidadesClient donadoresYEntidadesClient;
     private final DonacionesClient donacionesClient;
     private final IncentivosClient incentivosClient;
+    private final LogisticaClient logisticaClient;
 
-    public Fachada(DonadoresYEntidadesClient donadoresYEntidadesClient, DonacionesClient donacionesClient, IncentivosClient incentivosClient) {
+    public Fachada(DonadoresYEntidadesClient donadoresYEntidadesClient, DonacionesClient donacionesClient, IncentivosClient incentivosClient, LogisticaClient logisticaClient) {
         this.donadoresYEntidadesClient = donadoresYEntidadesClient;
         this.donacionesClient = donacionesClient;
         this.incentivosClient = incentivosClient;
+        this.logisticaClient = logisticaClient;
     }
 
     public DonadorDTO registrarDonador(DonadorDTO donadorDTO) {
@@ -228,6 +233,14 @@ public class Fachada {
     public ResponseEntity<List<InsigniaDTO>> obtenerInsignias(){
         try {
             return incentivosClient.getInsignias();
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    public Optional<PaqueteDTO> buscarPaquete(String id){
+        try {
+            return logisticaClient.buscarPaquete(id);
         } catch (NumberFormatException e) {
             return null;
         }
