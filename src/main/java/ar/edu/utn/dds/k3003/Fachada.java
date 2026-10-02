@@ -71,35 +71,19 @@ public class Fachada {
     }
 
     public DonadorDTO buscarDonador(String id) {
-        try {
-            return donadoresYEntidadesClient.buscarDonador(id).getBody();
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return donadoresYEntidadesClient.buscarDonador(id).getBody();
     }
 
     public List<DonadorDTO> obtenerDonadores() {
         return donadoresYEntidadesClient.obtenerDonadores().getBody();
     }
 
-    public EntidadBeneficaDTO registrarEntidad(
-            EntidadBeneficaDTO entidadDTO
-    ) {
+    public EntidadBeneficaDTO registrarEntidad(EntidadBeneficaDTO entidadDTO) {
         return donadoresYEntidadesClient.agregarEntidad(entidadDTO).getBody();
     }
 
-    public EntidadBeneficaDTO modificarEntidad(
-            String id,
-            EntidadBeneficaDTO entidadDTO
-    ) {
-        try {
-            return donadoresYEntidadesClient.modificarEntidad(
-                    id,
-                    entidadDTO
-            ).getBody();
-        } catch (NumberFormatException e) {
-            return null;
-        }
+    public EntidadBeneficaDTO modificarEntidad(String id, EntidadBeneficaDTO entidadDTO) {
+        return donadoresYEntidadesClient.modificarEntidad(id, entidadDTO).getBody();
     }
 
     public List<EntidadBeneficaDTO> obtenerEntidades() {
@@ -107,53 +91,28 @@ public class Fachada {
     }
 
     public EntidadBeneficaDTO buscarEntidad(String id) {
-        try {
-            return donadoresYEntidadesClient.buscarEntidad(id).getBody();
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return donadoresYEntidadesClient.buscarEntidad(id).getBody();
     }
 
     public NecesidadMaterialDTO obtenerNecesidad(String id) {
-        try {
-            return donadoresYEntidadesClient.obtenerNecesidad(id).getBody();
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return donadoresYEntidadesClient.obtenerNecesidad(id).getBody();
     }
 
-    public NecesidadMaterialDTO registrarNecesidad(
-            NecesidadMaterialDTO necesidadDTO
-    ) {
+    public NecesidadMaterialDTO registrarNecesidad(NecesidadMaterialDTO necesidadDTO) {
         return donadoresYEntidadesClient.registrarNecesidad(necesidadDTO).getBody();
     }
 
     public String eliminarNecesidad(String id) {
         try {
             donadoresYEntidadesClient.eliminarNecesidad(id);
-
             return "La necesidad con ID " + id + " fue eliminada correctamente.";
-
-        } catch (NumberFormatException e) {
-            return "El ID de la necesidad no es válido.";
-
         } catch (Exception e) {
             return "No se pudo eliminar la necesidad con ID " + id + ".";
         }
     }
 
-    public NecesidadMaterialDTO modificarNecesidad(
-            String id,
-            NecesidadMaterialDTO necesidadDTO
-    ) {
-        try {
-            return donadoresYEntidadesClient.modificarNecesidad(
-                    id,
-                    necesidadDTO
-            ).getBody();
-        } catch (NumberFormatException e) {
-            return null;
-        }
+    public NecesidadMaterialDTO modificarNecesidad(String id, NecesidadMaterialDTO necesidadDTO) {
+        return donadoresYEntidadesClient.modificarNecesidad(id, necesidadDTO).getBody();
     }
 
     public ProductoDTO registrarProducto(ProductoDTO productoDTO) {
@@ -164,37 +123,21 @@ public class Fachada {
         try {
             donacionesClient.deleteProducto(id);
             return "El producto con ID " + id + " fue eliminada correctamente.";
-
-        } catch (NumberFormatException e) {
-            return "El ID del producto no es válido.";
-
         } catch (Exception e) {
             return "No se pudo eliminar el producto con ID " + id + ".";
         }
     }
 
     public ProductoDTO modificarProducto(ProductoDTO productoDTO){
-        try {
-            return donacionesClient.putProducto(productoDTO.id(), productoDTO).getBody();
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return donacionesClient.putProducto(productoDTO.id(), productoDTO).getBody();
     }
 
     public ResponseEntity<?> buscarProducto(String id){
-        try {
-            return donacionesClient.getProductoByID(id);
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return donacionesClient.getProductoByID(id);
     }
 
     public ResponseEntity<List<ProductoDTO>> obtenerProductos(){
-        try {
-            return donacionesClient.getProductos();
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return donacionesClient.getProductos();
     }
 
     public InsigniaDTO registrarInsignia(InsigniaDTO insignia) {
@@ -206,51 +149,29 @@ public class Fachada {
             incentivosClient.deleteInsignia(id);
             return "La insignia con ID " + id + " fue eliminada correctamente.";
 
-        } catch (NumberFormatException e) {
-            return "El ID de la insignia no es válido.";
-
         } catch (Exception e) {
             return "No se pudo eliminar la insignia con ID " + id + ".";
         }
     }
 
     public InsigniaDTO modificarInsignia(InsigniaDTO insignia){
-        try {
-            return (InsigniaDTO) incentivosClient.putInsignia(insignia.id(), insignia).getBody();
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return (InsigniaDTO) incentivosClient.putInsignia(insignia.id(), insignia).getBody();
     }
 
     public ResponseEntity<?> buscarInsignia(String id){
-        try {
-            return incentivosClient.getInsigniaById(id);
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return incentivosClient.getInsigniaById(id);
     }
 
     public ResponseEntity<List<InsigniaDTO>> obtenerInsignias(){
-        try {
-            return incentivosClient.getInsignias();
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return incentivosClient.getInsignias();
     }
 
     public Optional<PaqueteDTO> buscarPaquete(String id){
-        try {
-            return logisticaClient.buscarPaquete(id);
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return logisticaClient.buscarPaquete(id);
+
     }
 
     public List<PaqueteDTO> obtenerPaquetes(){
-        try {
-            return logisticaClient.getPaquetes();
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return logisticaClient.getPaquetes();
     }
 }

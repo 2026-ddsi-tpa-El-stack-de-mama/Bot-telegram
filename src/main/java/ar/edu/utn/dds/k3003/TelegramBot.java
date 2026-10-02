@@ -196,7 +196,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 return fachada.eliminarProducto(id);
             }
 
-            if(texto.startsWith("modificar_producto")){
+            if(texto.startsWith("/modificar_producto")){
                 return modificarProducto(texto);
             }
 
@@ -210,11 +210,11 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
 
             //INSIGNIAS -----------------------------------------------
-            if(texto.startsWith("registrar_insignia")){
+            if(texto.startsWith("/registrar_insignia")){
                 return registrarInsignia(texto);
             }
 
-            if(texto.startsWith("eliminar_insignia")){
+            if(texto.startsWith("/eliminar_insignia")){
                 String id = obtenerId(texto);
                 return fachada.eliminarInsignia(id);
             }
