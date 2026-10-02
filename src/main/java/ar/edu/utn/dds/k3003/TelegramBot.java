@@ -67,7 +67,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 """;
         }
 
-        if (texto.equalsIgnoreCase("/1_donadores")) {
+        if (texto.equalsIgnoreCase("/1_donadores ")) {
             return """
                 Opciones para donadores:
 
@@ -78,7 +78,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 """;
         }
 
-        if (texto.equalsIgnoreCase("/2_entidades")) {
+        if (texto.equalsIgnoreCase("/2_entidades ")) {
             return """
                 Opciones de entidades:
 
@@ -88,7 +88,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 /entidades - Listar todas las entidades.
                 """;
         }
-        if (texto.equalsIgnoreCase("/3_necesidades")) {
+        if (texto.equalsIgnoreCase("/3_necesidades ")) {
             return """
                 Opciones de necesidades:
 
@@ -99,7 +99,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 """;
         }
 
-        if (texto.equalsIgnoreCase("/4_productos")) {
+        if (texto.equalsIgnoreCase("/4_productos ")) {
             return """
                 Opciones de productos:
 
@@ -111,7 +111,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 """;
         }
 
-        if (texto.equalsIgnoreCase("/5_insignias")) {
+        if (texto.equalsIgnoreCase("/5_insignias ")) {
             return """
                 Opciones de insignias:
 
@@ -123,7 +123,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 """;
         }
 
-        if (texto.equalsIgnoreCase("/6_paquetes")) {
+        if (texto.equalsIgnoreCase("/6_paquetes ")) {
             return """
                 Opciones de paquetes:
 
@@ -132,7 +132,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 """;
         }
 
-        if (texto.equalsIgnoreCase("/7_donaciones")) {
+        if (texto.equalsIgnoreCase("/7_donaciones ")) {
             return """
                 Opciones de donaciones:
 
@@ -150,7 +150,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 return obtenerEntidad(id);
             }
 
-            if (texto.equalsIgnoreCase("/entidades")) {
+            if (texto.equalsIgnoreCase("/entidades ")) {
                 return obtenerEntidades();
             }
 
@@ -191,7 +191,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 return obtenerDonador(id);
             }
 
-            if (texto.equalsIgnoreCase("/donadores")) {
+            if (texto.equalsIgnoreCase("/donadores ")) {
                 return obtenerDonadores();
             }
 
@@ -201,16 +201,16 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
 
             //PRODUCTOS ---------------------------------------------
-            if(texto.startsWith("/registrar_producto")){
+            if(texto.startsWith("/registrar_producto ")){
                 return registrarProducto(texto);
             }
 
-            if(texto.startsWith("/eliminar_producto")){
+            if(texto.startsWith("/eliminar_producto ")){
                 String id = obtenerId(texto);
                 return fachada.eliminarProducto(id);
             }
 
-            if(texto.startsWith("/modificar_producto")){
+            if(texto.startsWith("/modificar_producto ")){
                 return modificarProducto(texto);
             }
 
@@ -219,21 +219,21 @@ public class TelegramBot extends TelegramLongPollingBot {
                 return obtenerProducto(id);
             }
 
-            if(texto.startsWith("/productos")){
+            if(texto.startsWith("/productos ")){
                 return obtenerProductos();
             }
 
             //INSIGNIAS -----------------------------------------------
-            if(texto.startsWith("/registrar_insignia")){
+            if(texto.startsWith("/registrar_insignia ")){
                 return registrarInsignia(texto);
             }
 
-            if(texto.startsWith("/eliminar_insignia")){
+            if(texto.startsWith("/eliminar_insignia ")){
                 String id = obtenerId(texto);
                 return fachada.eliminarInsignia(id);
             }
 
-            if(texto.startsWith("/modificar_insignia")){
+            if(texto.startsWith("/modificar_insignia ")){
                 return modificarInsignia(texto);
             }
 
@@ -242,7 +242,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 return obtenerInsignia(id);
             }
 
-            if(texto.startsWith("/insignias")){
+            if(texto.startsWith("/insignias ")){
                 return obtenerInsignias();
             }
 
@@ -251,12 +251,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                 String id = obtenerId(texto);
                 return obtenerPaquete(id);
             }
-            if(texto.startsWith("/paquetes")){
+            if(texto.startsWith("/paquetes ")){
                 return obtenerPaquetes();
             }
 
             //DONACIONES -----------------------------------
-            if(texto.startsWith("/registrar_donacion")){
+            if(texto.startsWith("/registrar_donacion ")){
                 return registrarDonacion(texto);
             }
 
@@ -265,11 +265,11 @@ public class TelegramBot extends TelegramLongPollingBot {
                 return obtenerDonacion(id);
             }
 
-            if(texto.startsWith("/donaciones")){
+            if(texto.startsWith("/donaciones ")){
                 return obtenerDonaciones();
             }
 
-            if(texto.startsWith("/eliminar_donacion")){
+            if(texto.startsWith("/eliminar_donacion ")){
                 String id = obtenerId(texto);
                 return fachada.eliminarDonacion(id);
             }
@@ -694,9 +694,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     public String obtenerProducto(String id){
-        ResponseEntity<?> productoDTO = (ResponseEntity<?>) fachada.buscarProducto(id).getBody();
+        ResponseEntity<?> productoDTO = fachada.buscarProducto(id);
 
-        if (productoDTO == null) {
+        if (productoDTO == null || productoDTO.getBody() == null) {
             return "No se encontró ningún producto con el ID " + id + ".";
         }
 
@@ -805,9 +805,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     public String obtenerInsignia(String id){
-        ResponseEntity<?> insignia = (ResponseEntity<?>) fachada.buscarInsignia(id).getBody();
+        ResponseEntity<?> insignia = fachada.buscarInsignia(id);
 
-        if (insignia == null) {
+        if (insignia == null || insignia.getBody() == null) {
             return "No se encontró ninguna insignia con el ID " + id + ".";
         }
 
@@ -938,15 +938,15 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     public String obtenerDonaciones(){
-        List<DonacionDTO> donaciones = (List<DonacionDTO>) fachada.obtenerDonaciones();
+        ResponseEntity<?> donaciones = fachada.obtenerDonaciones();
 
-        if (donaciones == null || donaciones.isEmpty()) {
+        if (donaciones == null || donaciones.getBody() == null) {
             return "No hay donaciones registrados.";
         }
-
+        List<DonacionDTO> donacionesList = (List<DonacionDTO>) donaciones.getBody();
         StringBuilder resultado = new StringBuilder("Donaciones registrados: \n\n");
 
-        for (DonacionDTO donacion : donaciones) {
+        for (DonacionDTO donacion : donacionesList) {
             resultado.append("ID: ")
                     .append(donacion.id())
                     .append("\n")
