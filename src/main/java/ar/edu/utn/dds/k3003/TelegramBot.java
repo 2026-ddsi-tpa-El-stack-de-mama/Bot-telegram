@@ -200,7 +200,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 return modificarProducto(texto);
             }
 
-            if(texto.startsWith("/producto")){
+            if(texto.startsWith("/producto ")){
                 String id = obtenerId(texto);
                 return obtenerProducto(id);
             }
@@ -223,7 +223,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 return modificarInsignia(texto);
             }
 
-            if(texto.startsWith("/insignia")){
+            if(texto.startsWith("/insignia ")){
                 String id = obtenerId(texto);
                 return obtenerInsignia(id);
             }
@@ -233,7 +233,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
 
             //PAQUETES ------------------------------------
-            if(texto.startsWith("/paquete")){
+            if(texto.startsWith("/paquete ")){
                 String id = obtenerId(texto);
                 return obtenerPaquete(id);
             }
