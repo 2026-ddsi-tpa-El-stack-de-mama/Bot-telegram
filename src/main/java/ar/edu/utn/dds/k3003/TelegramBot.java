@@ -150,7 +150,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 return obtenerEntidad(id);
             }
 
-            if (texto.equalsIgnoreCase("/entidades ")) {
+            if (texto.equalsIgnoreCase("/entidades")) {
                 return obtenerEntidades();
             }
 
@@ -191,7 +191,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 return obtenerDonador(id);
             }
 
-            if (texto.equalsIgnoreCase("/donadores ")) {
+            if (texto.equalsIgnoreCase("/donadores")) {
                 return obtenerDonadores();
             }
 
@@ -219,7 +219,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 return obtenerProducto(id);
             }
 
-            if(texto.startsWith("/productos ")){
+            if(texto.startsWith("/productos")){
                 return obtenerProductos();
             }
 
@@ -242,7 +242,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 return obtenerInsignia(id);
             }
 
-            if(texto.startsWith("/insignias ")){
+            if(texto.startsWith("/insignias")){
                 return obtenerInsignias();
             }
 
@@ -251,7 +251,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 String id = obtenerId(texto);
                 return obtenerPaquete(id);
             }
-            if(texto.startsWith("/paquetes ")){
+            if(texto.startsWith("/paquetes")){
                 return obtenerPaquetes();
             }
 
@@ -265,7 +265,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 return obtenerDonacion(id);
             }
 
-            if(texto.startsWith("/donaciones ")){
+            if(texto.startsWith("/donaciones")){
                 return obtenerDonaciones();
             }
 
@@ -444,14 +444,14 @@ public class TelegramBot extends TelegramLongPollingBot {
         String id = args[0];
 
         NecesidadMaterialDTO necesidad = new NecesidadMaterialDTO(
-                null,
-                args[0],
-                Integer.valueOf(args[1]),
-                args[2],
-                Integer.valueOf(args[3]),
+                id,
+                args[1],
+                Integer.valueOf(args[2]),
+                args[3],
                 Integer.valueOf(args[4]),
-                args[5],
-                TipoNecesidadMaterialEnum.valueOf(args[6])
+                Integer.valueOf(args[5]),
+                args[6],
+                TipoNecesidadMaterialEnum.valueOf(args[7])
         );
 
         NecesidadMaterialDTO modificada =
@@ -657,7 +657,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
 
         return "Producto registrado correctamente.\n\n"
-                + "ID: " + producto.id() + "\n";
+                + "ID: " + registrado.id() + "\n";
     }
 
     private String modificarProducto(String texto){
