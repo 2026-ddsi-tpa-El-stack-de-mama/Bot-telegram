@@ -1,5 +1,6 @@
 package ar.edu.utn.dds.k3003;
 
+import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.DonadorDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.DonadorStatsDTO;
@@ -168,10 +169,31 @@ public class Fachada {
 
     public Optional<PaqueteDTO> buscarPaquete(String id){
         return logisticaClient.buscarPaquete(id);
-
     }
 
     public List<PaqueteDTO> obtenerPaquetes(){
         return logisticaClient.getPaquetes();
+    }
+
+    public DonacionDTO registrarDonacion(DonacionDTO donacionDTO) {
+        return (DonacionDTO) donacionesClient.postDonacion(donacionDTO).getBody();
+    }
+
+    public ResponseEntity<?> buscarDonacion(String id){
+        return donacionesClient.getDonacionById(id);
+    }
+
+    public ResponseEntity<?> obtenerDonaciones(){
+        return donacionesClient.getDonaciones();
+    }
+
+    public String eliminarDonacion(String id){
+        try {
+            donacionesClient.deleteDonacion(id);
+            return "La donación con ID " + id + " fue eliminada correctamente.";
+
+        } catch (Exception e) {
+            return "No se pudo eliminar la donación con ID " + id + ".";
+        }
     }
 }

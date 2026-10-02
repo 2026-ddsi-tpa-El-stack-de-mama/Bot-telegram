@@ -1,5 +1,6 @@
 package ar.edu.utn.dds.k3003.clientes;
 
+import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -24,4 +25,16 @@ public interface DonacionesClient {
 
     @DeleteMapping("/productos/{id}")
     public ResponseEntity<ProductoDTO> deleteProducto(@PathVariable("id") String productoID);
+
+    @PostMapping("/donaciones")
+    public ResponseEntity<?> postDonacion(@RequestBody DonacionDTO donacionDTO);
+
+    @GetMapping("/donaciones/{id}")
+    public ResponseEntity<?> getDonacionById(@PathVariable("id") String donacionID);
+
+    @GetMapping("/donaciones")
+    public ResponseEntity<List <DonacionDTO>> getDonaciones();
+
+    @DeleteMapping("/donaciones/{id}")
+    public ResponseEntity<DonacionDTO> deleteDonacion(@PathVariable("id") String donacionID);
 }

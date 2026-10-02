@@ -1,4 +1,6 @@
 package ar.edu.utn.dds.k3003;
+import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
+import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.EstadoDonacionEnum;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.*;
 import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.InsigniaDTO;
@@ -61,6 +63,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 /4_productos - Ver opciones de productos.
                 /5_insignias - Ver opciones de insignias.
                 /6_paquetes - Ver opciones de paquetes.
+                /7_donaciones - Ver opciones de donaciones.
                 """;
         }
 
@@ -126,6 +129,17 @@ public class TelegramBot extends TelegramLongPollingBot {
 
                 /paquete <id> - Consultar un paquete.
                 /paquetes - Listar todos los paquetes.
+                """;
+        }
+
+        if (texto.equalsIgnoreCase("/7_donaciones")) {
+            return """
+                Opciones de donaciones:
+
+                /registrar_donacion <donadorID> <depositoID> <descripcion> <productoID> <cantidad> - Alta de donación.
+                /donacion <id> - Consultar una donación.
+                /donaciones - Listar todas las donaciones.
+                /eliminar_donacion <id> - Borrar una donación.
                 """;
         }
 
@@ -239,6 +253,25 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
             if(texto.startsWith("/paquetes")){
                 return obtenerPaquetes();
+            }
+
+            //DONACIONES -----------------------------------
+            if(texto.startsWith("/registrar_donacion")){
+                return registrarDonacion(texto);
+            }
+
+            if(texto.startsWith("/donacion ")){
+                String id = obtenerId(texto);
+                return obtenerDonacion(id);
+            }
+
+            if(texto.startsWith("/donaciones")){
+                return obtenerDonaciones();
+            }
+
+            if(texto.startsWith("/eliminar_donacion")){
+                String id = obtenerId(texto);
+                return fachada.eliminarDonacion(id);
             }
 
             return """
@@ -717,7 +750,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     Uso incorrecto.
 
                     Formato:
-                    /registrar_insignia <nombre> <descripcion> 
+                    /registrar_insignia <nombre> <descripcion>
 
                     Ejemplo:
                     /registrar_insignia especial premium
@@ -816,7 +849,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             return "No se encontró ningun paquete con el ID " + id + ".";
         }
 
-        return "Detalle de la insignia\n\n"
+        return "Detalle del paquete: \n\n"
                 + "ID: " + id + "\n"
                 + "Donación ID: " + paqueteDTO.get().donacionID() + "\n"
                 + "Producto: " + paqueteDTO.get().producto() + "\n"
@@ -848,6 +881,96 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         return resultado.toString().trim();
     }
+
+    private String registrarDonacion(String texto) {
+
+        String[] args = obtenerArgumentos(texto);
+
+        if (args.length != 5) {
+            return """
+                    Uso incorrecto.
+
+                    Formato:
+                    /registrar_donacion <donadorID> <depositoID> <descripcion> <productoID> <cantidad>
+
+                    Ejemplo:
+                    /registrar_donacion 254 334 fideos 245 5
+                    """;
+        }
+
+        DonacionDTO donacionDTO = new DonacionDTO(
+                null,
+                args[0],
+                args[1],
+                args[2],
+                args[3],
+                Integer.valueOf(args[4]),
+                EstadoDonacionEnum.INGRESADA
+        );
+
+        DonacionDTO registrada = fachada.registrarDonacion(donacionDTO);
+
+        if (registrada == null) {
+            return "No se pudo registrar la donación.";
+        }
+
+        return "Donacion registrada correctamente.\n\n"
+                + "ID: " + registrada.id();
+    }
+
+    public String obtenerDonacion(String id){
+        ResponseEntity<?> donacionDTO = fachada.buscarDonacion(id);
+
+        if (donacionDTO == null) {
+            return "No se encontró ninguna donación con el ID " + id + ".";
+        }
+
+        DonacionDTO donacion = (DonacionDTO) donacionDTO.getBody();
+
+        return "Detalle de la donación\n\n"
+                + "ID: " + id + "\n"
+                + "Donador ID: " + donacion.donadorID() + "\n"
+                + "Deposito ID: " + donacion.depositoID() + "\n"
+                + "Descripción: " + donacion.descripcion() + "\n"
+                + "Producto ID: " + donacion.productoID() + "\n"
+                + "Cantidad: " + donacion.cantidad().toString() + "\n"
+                + "Estado: " + donacion.estado().toString();
+    }
+
+    public String obtenerDonaciones(){
+        List<DonacionDTO> donaciones = (List<DonacionDTO>) fachada.obtenerDonaciones();
+
+        if (donaciones == null || donaciones.isEmpty()) {
+            return "No hay donaciones registrados.";
+        }
+
+        StringBuilder resultado = new StringBuilder("Donaciones registrados: \n\n");
+
+        for (DonacionDTO donacion : donaciones) {
+            resultado.append("ID: ")
+                    .append(donacion.id())
+                    .append("\n")
+                    .append("Donador ID: ")
+                    .append(donacion.donadorID())
+                    .append("\n")
+                    .append("Depósito ID: ")
+                    .append(donacion.depositoID())
+                    .append("\n")
+                    .append("Descripción: ")
+                    .append(donacion.descripcion())
+                    .append("\n")
+                    .append("Producto ID: ")
+                    .append(donacion.productoID())
+                    .append("\n")
+                    .append("Cantidad: ")
+                    .append(donacion.cantidad())
+                    .append("\n")
+                    .append("Estado: ")
+                    .append(donacion.estado());
+        }
+        return resultado.toString().trim();
+    }
+
 
     private void enviarMensaje(Long chatId, String texto) {
 
