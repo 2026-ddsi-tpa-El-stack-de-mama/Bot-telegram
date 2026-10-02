@@ -67,7 +67,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 """;
         }
 
-        if (texto.equalsIgnoreCase("/1_donadores ")) {
+        if (texto.equalsIgnoreCase("/1_donadores")) {
             return """
                 Opciones para donadores:
 
@@ -78,7 +78,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 """;
         }
 
-        if (texto.equalsIgnoreCase("/2_entidades ")) {
+        if (texto.equalsIgnoreCase("/2_entidades")) {
             return """
                 Opciones de entidades:
 
@@ -88,7 +88,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 /entidades - Listar todas las entidades.
                 """;
         }
-        if (texto.equalsIgnoreCase("/3_necesidades ")) {
+        if (texto.equalsIgnoreCase("/3_necesidades")) {
             return """
                 Opciones de necesidades:
 
@@ -99,7 +99,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 """;
         }
 
-        if (texto.equalsIgnoreCase("/4_productos ")) {
+        if (texto.equalsIgnoreCase("/4_productos")) {
             return """
                 Opciones de productos:
 
@@ -111,7 +111,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 """;
         }
 
-        if (texto.equalsIgnoreCase("/5_insignias ")) {
+        if (texto.equalsIgnoreCase("/5_insignias")) {
             return """
                 Opciones de insignias:
 
@@ -123,7 +123,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 """;
         }
 
-        if (texto.equalsIgnoreCase("/6_paquetes ")) {
+        if (texto.equalsIgnoreCase("/6_paquetes")) {
             return """
                 Opciones de paquetes:
 
@@ -132,7 +132,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 """;
         }
 
-        if (texto.equalsIgnoreCase("/7_donaciones ")) {
+        if (texto.equalsIgnoreCase("/7_donaciones")) {
             return """
                 Opciones de donaciones:
 
