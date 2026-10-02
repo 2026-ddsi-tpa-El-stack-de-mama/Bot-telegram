@@ -68,7 +68,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             return """
                 Opciones para donadores:
 
-                /registrar_donador <nombre> <apellido> <edad> ... - Registrarse como donador.
+                /registrar_donador <nombre> <apellido> <edad> <email> <nroDocumento> <domicilio> <estado> <categoria> - Registrarse como donador.
                 /estadisticas <id> - Consultar tus estadísticas.
                 /donador <id> - Buscar un donador por ID.
                 /donadores - Listar todos los donadores.
@@ -484,7 +484,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 /registrar_donador <nombre> <apellido> <edad> <email> <nroDocumento> <domicilio> <estado> <categoria>
 
                 Ejemplo:
-                /registrar_donador Juan Perez 25 juan@mail.com 30123456 CalleFalsa123 VERIFICADO ORO
+                /registrar_donador Juan Perez 25 juan@mail.com 30123456 CalleFalsa123 ACTIVO or
                 """;
         }
 
@@ -824,7 +824,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     public String obtenerPaquetes(){
-        List<PaqueteDTO> paquetes = fachada.obtenerPaquetes().getBody();
+        List<PaqueteDTO> paquetes = fachada.obtenerPaquetes();
 
         if (paquetes == null || paquetes.isEmpty()) {
             return "No hay paquetes registrados.";
