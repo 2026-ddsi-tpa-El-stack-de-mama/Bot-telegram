@@ -285,7 +285,9 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return "Ocurrió un error al procesar la solicitud.";
+            //return "Ocurrió un error al procesar la solicitud.";
+            return "ERROR: " + e.getClass().getSimpleName()
+                    + " - " + e.getMessage();
         }
     }
 
