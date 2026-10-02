@@ -246,4 +246,11 @@ public class Fachada {
         }
     }
 
+    public ResponseEntity<List<PaqueteDTO>> obtenerPaquetes(){
+        try {
+            return (ResponseEntity<List<PaqueteDTO>>) logisticaClient.getPaquetes();
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
 }

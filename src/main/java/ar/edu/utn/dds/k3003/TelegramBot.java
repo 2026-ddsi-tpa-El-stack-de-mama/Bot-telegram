@@ -125,6 +125,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 Opciones de paquetes:
 
                 /paquete <id> - Consultar un paquete.
+                /paquetes - Listar todos los paquetes.
                 """;
         }
 
@@ -232,9 +233,12 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
 
             //PAQUETES ------------------------------------
-            if(texto.startsWith("/paquetes")){
+            if(texto.startsWith("/paquete")){
                 String id = obtenerId(texto);
                 return obtenerPaquete(id);
+            }
+            if(texto.startsWith("/paquetes")){
+                return obtenerPaquetes();
             }
 
             return """
@@ -817,6 +821,32 @@ public class TelegramBot extends TelegramLongPollingBot {
                 + "Donación ID: " + paqueteDTO.get().donacionID() + "\n"
                 + "Producto: " + paqueteDTO.get().producto() + "\n"
                 + "Cantidad: " + paqueteDTO.get().cantidad().toString();
+    }
+
+    public String obtenerPaquetes(){
+        List<PaqueteDTO> paquetes = fachada.obtenerPaquetes().getBody();
+
+        if (paquetes == null || paquetes.isEmpty()) {
+            return "No hay paquetes registrados.";
+        }
+
+        StringBuilder resultado = new StringBuilder("Paquetes registrados: \n\n");
+
+        for (PaqueteDTO paquete : paquetes) {
+            resultado.append("ID: ")
+                    .append(paquete.id())
+                    .append("\n")
+                    .append("Donación ID: ")
+                    .append(paquete.donacionID())
+                    .append("\n")
+                    .append("Producto: ")
+                    .append(paquete.producto())
+                    .append("\n")
+                    .append("Cantidad: ")
+                    .append(paquete.cantidad());
+        }
+
+        return resultado.toString().trim();
     }
 
     private void enviarMensaje(Long chatId, String texto) {
