@@ -7,7 +7,6 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.DonadorStatsDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.EntidadBeneficaDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.NecesidadMaterialDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.InsigniaDTO;
-import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.MisionDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.logistica.PaqueteDTO;
 import ar.edu.utn.dds.k3003.clientes.DonacionesClient;
 import ar.edu.utn.dds.k3003.clientes.DonadoresYEntidadesClient;
@@ -196,31 +195,5 @@ public class Fachada {
         } catch (Exception e) {
             return "No se pudo eliminar la donación con ID " + id + ".";
         }
-    }
-
-    public MisionDTO registrarMision(MisionDTO misionDTO) {
-        return (MisionDTO) incentivosClient.postMision(misionDTO).getBody();
-    }
-
-    public InsigniaDTO modificarMision(MisionDTO misionDTO){
-        return (InsigniaDTO) incentivosClient.putMision(misionDTO.id(), misionDTO).getBody();
-    }
-
-    public String eliminarMision(String id){
-        try {
-            incentivosClient.deleteMision(id);
-            return "La misión con ID " + id + " fue eliminada correctamente.";
-
-        } catch (Exception e) {
-            return "No se pudo eliminar la misión con ID " + id + ".";
-        }
-    }
-
-    public ResponseEntity<?> buscarMision(String id){
-        return incentivosClient.getMisionById(id);
-    }
-
-    public ResponseEntity<List<MisionDTO>> buscarMisiones(){
-        return incentivosClient.getMisiones();
     }
 }

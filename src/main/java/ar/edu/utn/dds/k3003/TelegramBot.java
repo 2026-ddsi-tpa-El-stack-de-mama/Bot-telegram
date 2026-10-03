@@ -3,10 +3,7 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.EstadoDonacionEnum;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.*;
-import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.CategoriaDonadorEnum;
 import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.InsigniaDTO;
-import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.MisionDTO;
-import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.TipoMisionEnum;
 import ar.edu.utn.dds.k3003.catedra.dtos.logistica.PaqueteDTO;
 import ar.edu.utn.dds.k3003.config.TelegramClientProperties;
 import org.springframework.context.annotation.Lazy;
@@ -67,7 +64,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                 /5_insignias - Ver opciones de insignias.
                 /6_paquetes - Ver opciones de paquetes.
                 /7_donaciones - Ver opciones de donaciones.
-                /8_misiones - Ver opciones de misiones.
                 """;
         }
 
@@ -144,17 +140,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                 /donacion <id> - Consultar una donación.
                 /donaciones - Listar todas las donaciones.
                 /eliminar_donacion <id> - Borrar una donación.
-                """;
-        }
-        if (texto.equalsIgnoreCase("/8_misiones")) {
-            return """
-                Opciones de misiones:
-
-                /registrar_mision <nombre> <insigniaID> <categoriaInicio> <categoriaFin> <tipo> - Alta de misión.
-                /modificar_mision <id> <nombre> <insigniaID> <categoriaInicio> <categoriaFin> <tipo> - Modificar una misión.
-                /eliminar_mision <id> - Borrar una misión.
-                /mision <id> - Consultar una misión.
-                /misiones - Listar todas las misiones.
                 """;
         }
 
@@ -287,29 +272,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             if(texto.startsWith("/eliminar_donacion ")){
                 String id = obtenerId(texto);
                 return fachada.eliminarDonacion(id);
-            }
-
-            //MISIONES ------------------------------------
-            if(texto.startsWith("/registrar_mision ")){
-                return registrarMision(texto);
-            }
-
-            if(texto.startsWith("/modificar_mision ")){
-                return modificarMision(texto);
-            }
-
-            if(texto.startsWith("/eliminar_mision ")){
-                String id = obtenerId(texto);
-                return fachada.eliminarMision(id);
-            }
-
-            if(texto.startsWith("/mision ")){
-                String id = obtenerId(texto);
-                return obtenerMision(id);
-            }
-
-            if(texto.startsWith("/misiones")){
-                return obtenerMisiones();
             }
 
             return """
@@ -914,8 +876,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     .append(paquete.producto())
                     .append("\n")
                     .append("Cantidad: ")
-                    .append(paquete.cantidad())
-                    .append("\n\n");
+                    .append(paquete.cantidad());
         }
 
         return resultado.toString().trim();
@@ -1005,131 +966,11 @@ public class TelegramBot extends TelegramLongPollingBot {
                     .append(donacion.cantidad())
                     .append("\n")
                     .append("Estado: ")
-                    .append(donacion.estado())
-                    .append("\n\n");
+                    .append(donacion.estado());
         }
         return resultado.toString().trim();
     }
 
-    private String registrarMision(String texto) {
-
-        String[] args = obtenerArgumentos(texto);
-
-        if (args.length != 5) {
-            return """
-                    Uso incorrecto.
-
-                    Formato:
-                    /registrar_mision <nombre> <insigniaID> <categoriaInicio> <categoriaFin> <tipo>
-
-                    Ejemplo:
-                    /registrar_mision especial 345 OCASIONAL SALVADOR DONACIONES-ASCENDENTES
-                    """;
-        }
-
-        MisionDTO mision = new MisionDTO(
-                null,
-                args[0],
-                args[1],
-                CategoriaDonadorEnum.valueOf(args[2]),
-                CategoriaDonadorEnum.valueOf(args[3]),
-                TipoMisionEnum.valueOf(args[4])
-        );
-
-        MisionDTO registrada = fachada.registrarMision(mision);
-
-        if (registrada == null) {
-            return "No se pudo registrar la misión.";
-        }
-
-        return "Misión registrada correctamente.\n\n"
-                + "ID: " + registrada.id();
-    }
-
-
-    private String modificarMision(String texto){
-        String[] args = obtenerArgumentos(texto);
-
-        if (args.length != 6) {
-            return """
-                    Uso incorrecto.
-
-                    Formato:
-                    /modificar_mision <id> <nombre> <insigniaID> <categoriaInicio> <categoriaFin> <tipo>
-
-                    Ejemplo:
-                    /modificar_mision 4325 especial 345 OCASIONAL SALVADOR DONACIONES-ASCENDENTES
-                    """;
-        }
-
-        MisionDTO mision = new MisionDTO(
-                args[0],
-                args[1],
-                args[2],
-                CategoriaDonadorEnum.valueOf(args[3]),
-                CategoriaDonadorEnum.valueOf(args[4]),
-                TipoMisionEnum.valueOf(args[5])
-        );
-
-        InsigniaDTO modificado = fachada.modificarMision(mision);
-
-        if (modificado == null) {
-            return "No se pudo registrar la insignia.";
-        }
-
-        return "Misión modificada correctamente.\n\n"
-                + "ID: " + modificado.id() + "\n";
-    }
-
-    public String obtenerMision(String id){
-        ResponseEntity<?> mision = fachada.buscarMision(id);
-
-        if (mision == null) {
-            return "No se encontró ninguna misión con el ID " + id + ".";
-        }
-
-        MisionDTO misionDTO = (MisionDTO) mision.getBody();
-
-        return "Detalle de la misión: \n\n"
-                + "ID: " + id + "\n"
-                + "Nombre: " + misionDTO.nombre() + "\n"
-                + "Insignia ID: " + misionDTO.insigniaID() + "\n"
-                + "Categoria inicio: " + misionDTO.categoriaInicio() + "\n"
-                + "Categoria fin: " + misionDTO.categoriaFin() + "\n"
-                + "Tipo: " + misionDTO.tipo();
-    }
-
-    public String obtenerMisiones(){
-        ResponseEntity<List<MisionDTO>> misiones = fachada.buscarMisiones();
-
-        if (misiones == null || misiones.getBody() == null) {
-            return "No hay misiones registrados.";
-        }
-        List<MisionDTO> misionesList = (List<MisionDTO>) misiones.getBody();
-        StringBuilder resultado = new StringBuilder("Misiones registradas: \n\n");
-
-        for (MisionDTO mision : misionesList) {
-            resultado.append("ID: ")
-                    .append(mision.id())
-                    .append("\n")
-                    .append("Nombre: ")
-                    .append(mision.nombre())
-                    .append("\n")
-                    .append("Insignia ID: ")
-                    .append(mision.insigniaID())
-                    .append("\n")
-                    .append("Categoria inicio: ")
-                    .append(mision.categoriaInicio())
-                    .append("\n")
-                    .append("Categoria fin: ")
-                    .append(mision.categoriaFin())
-                    .append("\n")
-                    .append("Tipo: ")
-                    .append(mision.tipo())
-                    .append("\n\n");
-        }
-        return resultado.toString().trim();
-    }
 
     private void enviarMensaje(Long chatId, String texto) {
 
