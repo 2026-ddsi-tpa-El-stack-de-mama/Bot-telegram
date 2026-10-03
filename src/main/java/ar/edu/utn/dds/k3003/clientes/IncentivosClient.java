@@ -1,6 +1,7 @@
 package ar.edu.utn.dds.k3003.clientes;
 
 import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.InsigniaDTO;
+import ar.edu.utn.dds.k3003.dtosBot.InsigniasResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public interface IncentivosClient {
     public ResponseEntity<?> deleteInsignia(@PathVariable("id") String insigniaID);
 
     @GetMapping("/insignias")
-    public ResponseEntity<List<InsigniaDTO>> getInsignias();
+    public InsigniasResponse getInsignias();
 
     @GetMapping("/insignias/{id}")
     public ResponseEntity<?> getInsigniaById(@PathVariable("id") String insigniaID);

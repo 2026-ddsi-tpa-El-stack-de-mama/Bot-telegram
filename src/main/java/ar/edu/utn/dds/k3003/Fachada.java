@@ -13,6 +13,7 @@ import ar.edu.utn.dds.k3003.clientes.DonadoresYEntidadesClient;
 
 import ar.edu.utn.dds.k3003.clientes.IncentivosClient;
 import ar.edu.utn.dds.k3003.clientes.LogisticaClient;
+import ar.edu.utn.dds.k3003.dtosBot.InsigniasResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -163,7 +164,7 @@ public class Fachada {
         return incentivosClient.getInsigniaById(id);
     }
 
-    public ResponseEntity<List<InsigniaDTO>> obtenerInsignias(){
+    public InsigniasResponse obtenerInsignias(){
         return incentivosClient.getInsignias();
     }
 

@@ -6,6 +6,7 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.*;
 import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.InsigniaDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.logistica.PaqueteDTO;
 import ar.edu.utn.dds.k3003.config.TelegramClientProperties;
+import ar.edu.utn.dds.k3003.dtosBot.InsigniasResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
@@ -818,7 +819,10 @@ public class TelegramBot extends TelegramLongPollingBot {
             return "No se encontró ninguna insignia con el ID " + id + ".";
         }
 
-        InsigniaDTO insigniaDTO = (InsigniaDTO) insignia.getBody();
+        InsigniaDTO insigniaDTO = objectMapper.convertValue(
+                insignia.getBody(),
+                InsigniaDTO.class
+        );
 
         return "Detalle de la insignia\n\n"
                 + "ID: " + id + "\n"
@@ -827,15 +831,15 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     public String obtenerInsignias(){
-        List<InsigniaDTO> insignias = fachada.obtenerInsignias().getBody();
+        InsigniasResponse insignias = fachada.obtenerInsignias();
 
-        if (insignias == null || insignias.isEmpty()) {
+        if (insignias == null) {
             return "No hay insignias registradas.";
         }
 
         StringBuilder resultado = new StringBuilder("Insignias registradas\n\n");
 
-        for (InsigniaDTO insignia : insignias) {
+        for (InsigniaDTO insignia : insignias.data()) {
             resultado.append("ID: ")
                     .append(insignia.id())
                     .append("\n")
