@@ -934,7 +934,10 @@ public class TelegramBot extends TelegramLongPollingBot {
             return "No se encontró ninguna donación con el ID " + id + ".";
         }
 
-        DonacionDTO donacion = (DonacionDTO) donacionDTO.getBody();
+        DonacionDTO donacion = objectMapper.convertValue(
+                donacionDTO.getBody(),
+                DonacionDTO.class
+        );
 
         return "Detalle de la donación\n\n"
                 + "ID: " + id + "\n"
@@ -947,7 +950,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     public String obtenerDonaciones(){
-        ResponseEntity<List<DonacionDTO> > donaciones = fachada.obtenerDonaciones();
+        ResponseEntity<List<DonacionDTO>> donaciones = fachada.obtenerDonaciones();
 
         if (donaciones == null || donaciones.getBody() == null) {
             return "No hay donaciones registrados.";
