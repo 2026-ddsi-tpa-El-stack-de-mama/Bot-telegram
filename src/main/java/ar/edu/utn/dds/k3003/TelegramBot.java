@@ -947,12 +947,12 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     public String obtenerDonaciones(){
-        ResponseEntity<?> donaciones = fachada.obtenerDonaciones();
+        ResponseEntity<List<DonacionDTO> > donaciones = fachada.obtenerDonaciones();
 
         if (donaciones == null || donaciones.getBody() == null) {
             return "No hay donaciones registrados.";
         }
-        List<DonacionDTO> donacionesList = (List<DonacionDTO>) donaciones.getBody();
+        List<DonacionDTO> donacionesList = donaciones.getBody();
         StringBuilder resultado = new StringBuilder("Donaciones registrados: \n\n");
 
         for (DonacionDTO donacion : donacionesList) {

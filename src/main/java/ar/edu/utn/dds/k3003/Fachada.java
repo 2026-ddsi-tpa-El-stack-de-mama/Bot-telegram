@@ -183,7 +183,7 @@ public class Fachada {
         return donacionesClient.getDonacionById(id);
     }
 
-    public ResponseEntity<?> obtenerDonaciones(){
+    public ResponseEntity<List<DonacionDTO>> obtenerDonaciones(){
         return donacionesClient.getDonaciones();
     }
 
