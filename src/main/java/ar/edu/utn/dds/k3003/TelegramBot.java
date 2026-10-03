@@ -6,6 +6,7 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.*;
 import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.InsigniaDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.logistica.PaqueteDTO;
 import ar.edu.utn.dds.k3003.config.TelegramClientProperties;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -23,14 +24,16 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final Fachada fachada;
     private final String botUsername;
     private final String botToken;
+    private final ObjectMapper objectMapper;
 
     public TelegramBot(
             Fachada fachada,
-            TelegramClientProperties properties
+            TelegramClientProperties properties, ObjectMapper objectMapper
     ) {
         this.fachada = fachada;
         this.botUsername = properties.getBotUsername();
         this.botToken = properties.getBotToken();
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -701,7 +704,10 @@ public class TelegramBot extends TelegramLongPollingBot {
             return "No se encontró ningún producto con el ID " + id + ".";
         }
 
-        ProductoDTO producto = (ProductoDTO) productoDTO.getBody();
+        ProductoDTO producto = objectMapper.convertValue(
+                productoDTO.getBody(),
+                ProductoDTO.class
+        );
 
         return "Detalle del producto\n\n"
                 + "ID: " + id + "\n"
