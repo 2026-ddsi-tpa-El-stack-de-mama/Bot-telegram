@@ -950,6 +950,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     public String obtenerDonaciones(){
+        System.out.println("Entré a obtener donaciones");
         ResponseEntity<List<DonacionDTO>> donaciones = fachada.obtenerDonaciones();
 
         if (donaciones == null || donaciones.getBody() == null) {
