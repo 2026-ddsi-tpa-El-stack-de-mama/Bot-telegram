@@ -836,7 +836,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                     .append(insignia.nombre())
                     .append("\n")
                     .append("Descripcion: ")
-                    .append(insignia.descripcion());
+                    .append(insignia.descripcion())
+                    .append("\n\n");
         }
 
         return resultado.toString().trim();
@@ -876,7 +877,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                     .append(paquete.producto())
                     .append("\n")
                     .append("Cantidad: ")
-                    .append(paquete.cantidad());
+                    .append(paquete.cantidad())
+                    .append("\n\n");
         }
 
         return resultado.toString().trim();
@@ -966,7 +968,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                     .append(donacion.cantidad())
                     .append("\n")
                     .append("Estado: ")
-                    .append(donacion.estado());
+                    .append(donacion.estado())
+                    .append("\n\n");
         }
         return resultado.toString().trim();
     }
